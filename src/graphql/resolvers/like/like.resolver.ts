@@ -1,6 +1,6 @@
-import { AuthMiddleware } from "../../middleware/auth.middleware";
-import { LikeService } from "../services/like.service";
-import { Context } from "../../types/context";
+import { AuthMiddleware } from "../../../middleware/auth.middleware";
+import { LikeService } from "../../services/like.service";
+import { Context } from "../../../types/context";
 
 /**
  * Creates a new LikeService instance with the provided context

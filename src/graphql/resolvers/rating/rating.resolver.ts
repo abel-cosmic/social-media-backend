@@ -1,6 +1,6 @@
-import { AuthMiddleware } from "../../middleware/auth.middleware";
-import { RatingService } from "../services/rating.service";
-import { Context } from "../../types/context";
+import { AuthMiddleware } from "../../../middleware/auth.middleware";
+import { Context } from "../../../types/context";
+import { RatingService } from "../../services/rating.service";
 
 /**
  * Creates a new RatingService instance with the provided context

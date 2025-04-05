@@ -1,6 +1,6 @@
-import { AuthMiddleware } from "../../middleware/auth.middleware";
-import { UserService } from "../services/user.service";
-import { Context } from "../../types/context";
+import { AuthMiddleware } from "../../../middleware/auth.middleware";
+import { UserService } from "../../services/user.service";
+import { Context } from "../../../types/context";
 
 /**
  * Creates a new UserService instance with the provided context

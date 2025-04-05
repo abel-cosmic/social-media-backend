@@ -1,6 +1,6 @@
-import { AuthMiddleware } from "../../middleware/auth.middleware";
-import { CommentService } from "../services/comment.service";
-import { Context } from "../../types/context";
+import { AuthMiddleware } from "../../../middleware/auth.middleware";
+import { CommentService } from "../../services/comment.service";
+import { Context } from "../../../types/context";
 
 /**
  * Creates a new CommentService instance with the provided context

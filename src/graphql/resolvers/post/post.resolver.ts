@@ -1,6 +1,6 @@
-import { AuthMiddleware } from "../../middleware/auth.middleware";
-import { PostService } from "../services/post.service";
-import { Context } from "../../types/context";
+import { AuthMiddleware } from "../../../middleware/auth.middleware";
+import { PostService } from "../../services/post.service";
+import { Context } from "../../../types/context";
 
 /**
  * Creates a new PostService instance with the provided context
