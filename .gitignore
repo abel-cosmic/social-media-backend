@@ -67,3 +67,6 @@ logs/*.txt
 
 # Prisma seed file
 seed.ts
+
+# Coverage files
+coverage
