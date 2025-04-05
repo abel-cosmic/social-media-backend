@@ -1,0 +1,69 @@
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Dependency directories
+node_modules/
+**/node_modules/
+
+# Build directories
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Database
+/prisma/migrations/
+/prisma/*.db
+/prisma/*.sqlite*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+log.txt
+
+# Runtime data
+*.pid
+*.seed
+*.pid.lock
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Docker
+docker-compose.override.yml
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Prisma generated files
+/generated
+
+# log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/*.log
+logs/*.txt
+
+# Prisma seed file
+seed.ts
