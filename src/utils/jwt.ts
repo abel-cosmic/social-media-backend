@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 import { logger } from "./logger";
 import { config } from "../config/env";
 
@@ -10,91 +10,91 @@ interface JwtPayload {
   exp?: number;
 }
 
-interface TokenOptions {
-  expiresIn?: string;
+type TokenOptions = SignOptions & {
   issuer?: string;
   audience?: string;
-}
+};
 
 export class JwtUtils {
-  private static readonly defaultOptions: TokenOptions = {
-    expiresIn: config.jwtExpiresIn || "7d",
-    issuer: config.jwtIssuer || "your-app-name",
-    audience: config.jwtAudience || "your-app-client",
+  private static defaultOptions = {
+    expiresIn: process.env.JWT_EXPIRES_IN ?? "1hr",
+    issuer: config.jwtIssuer || "social-media-api",
+    audience: config.jwtAudience || "social-media-app",
+    algorithm: "HS256",
   };
 
   static generateToken(
     payload: Omit<JwtPayload, "iat" | "exp">,
     options: TokenOptions = {}
   ): string {
-    try {
-      const mergedOptions = { ...this.defaultOptions, ...options };
-      //@ts-ignore
-      return jwt.sign(payload, config.jwtSecret, {
-        expiresIn: mergedOptions.expiresIn,
-        issuer: mergedOptions.issuer,
-        audience: mergedOptions.audience,
-        algorithm: "HS256",
-      });
-    } catch (error) {
-      logger.error("Error generating JWT token", {
-        error,
-        userId: payload.userId,
-      });
-      throw new Error("Failed to generate authentication token");
+    if (!config.jwtSecret) {
+      throw new Error("JWT_SECRET is not configured");
     }
+
+    // Type assertion needed for expiresIn string format
+    const signOptions: SignOptions = {
+      ...this.defaultOptions,
+      ...options,
+    } as SignOptions;
+
+    return jwt.sign(payload, config.jwtSecret, signOptions);
   }
 
   static verifyToken(token: string): JwtPayload {
-    try {
-      if (!token) {
-        throw new Error("No token provided");
-      }
+    if (!config.jwtSecret) {
+      throw new Error("JWT_SECRET is not configured");
+    }
 
-      return jwt.verify(token, config.jwtSecret, {
+    try {
+      const decoded = jwt.verify(token, config.jwtSecret, {
         algorithms: ["HS256"],
         issuer: this.defaultOptions.issuer,
         audience: this.defaultOptions.audience,
-      }) as JwtPayload;
+      });
+
+      if (typeof decoded === "string" || !decoded) {
+        throw new Error("Invalid token format");
+      }
+
+      if (!("userId" in decoded)) {
+        throw new Error("Token payload missing required fields");
+      }
+
+      return decoded as JwtPayload;
     } catch (error) {
-      logger.error("JWT verification failed", { error });
-
-      // Handle specific JWT errors
-      if (error instanceof jwt.TokenExpiredError) {
-        throw new Error("Authentication token expired");
-      }
-      if (error instanceof jwt.JsonWebTokenError) {
-        throw new Error("Invalid authentication token");
-      }
-
-      throw new Error("Authentication verification failed");
+      logger.error("Token verification failed", error);
+      throw error;
     }
   }
 
   static decodeToken(token: string): JwtPayload | null {
     try {
-      return jwt.decode(token) as JwtPayload;
+      const decoded = jwt.decode(token, { complete: false });
+
+      if (!decoded || typeof decoded === "string") {
+        return null;
+      }
+
+      if (!("userId" in decoded)) {
+        return null;
+      }
+
+      return decoded as JwtPayload;
     } catch (error) {
-      logger.warn("JWT decode failed", { error });
+      logger.error("Error decoding token", error);
       return null;
     }
   }
 
-
-  static refreshToken(token: string, newExpiry?: string): string {
-    try {
-      const payload = this.verifyToken(token);
-      return this.generateToken(
-        {
-          userId: payload.userId,
-          username: payload.username,
-          role: payload.role,
-        },
-        { expiresIn: newExpiry || this.defaultOptions.expiresIn }
-      );
-    } catch (error) {
-      logger.error("Token refresh failed", { error });
-      throw new Error("Failed to refresh token");
-    }
+  static refreshToken(token: string, newExpiry?:any): string {
+    const decoded = this.verifyToken(token);
+    return this.generateToken(
+      {
+        userId: decoded.userId,
+        username: decoded.username,
+        role: decoded.role,
+      },
+      { expiresIn: newExpiry || this.defaultOptions.expiresIn }
+    );
   }
 }

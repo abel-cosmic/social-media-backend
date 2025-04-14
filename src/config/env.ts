@@ -6,7 +6,7 @@ export const config = {
   port: Number(process.env.PORT) || 4000,
   nodeEnv: process.env.NODE_ENV ,
   jwtSecret: process.env.JWT_SECRET ,
-  jwtExpiresIn: process.env.JWT_EXPIRES_IN ,
+  jwtExpiresIn: process.env.JWT_EXPIRES_IN || "1hr" ,
   jwtIssuer: process.env.JWT_ISSUER,
   jwtAudience: process.env.JWT_AUDIENCE,
   databaseUrl:

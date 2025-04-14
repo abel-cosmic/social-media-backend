@@ -18,12 +18,12 @@ services:
     command: >
       sh -c "
       echo 'Waiting for database to be ready...';
-      until pnpm prisma migrate dev --name init; do
+      until npx prisma migrate dev --name init; do
         echo 'Migration failed, retrying in 5 seconds...';
         sleep 5;
       done;
       echo 'Migrations applied successfully!';
-      pnpm dev;
+      npm dev;
       "
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4000/health"]

@@ -1,24 +1,11 @@
-FROM node:18-alpine
+FROM mysql:latest
 
-# Install required dependencies including openssl
-RUN apk add --no-cache openssl openssl-dev
+# Set environment variables
+ENV MYSQL_ROOT_PASSWORD=rootpassword
+ENV MYSQL_DATABASE=socialmedia
 
-WORKDIR /usr/src/app
+# Expose MySQL port
+EXPOSE 3306
 
-# Install pnpm and nodemon globally
-RUN npm install -g pnpm nodemon
-
-COPY package.json pnpm-lock.yaml ./
-
-# Install all dependencies (including devDependencies)
-RUN pnpm install
-
-# Copy Prisma schema and generate client
-COPY prisma/schema.prisma ./prisma/
-RUN pnpm prisma:generate
-
-COPY . .
-
-EXPOSE 4000
-
-CMD ["pnpm", "dev"]
+# You could add initialization scripts here if needed
+# COPY init.sql /docker-entrypoint-initdb.d/
